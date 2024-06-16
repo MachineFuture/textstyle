@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Stylizer</title>
+    <style>
+        @font-face {
+            font-family: 'Nintendo NTLGDB';
+            src: url('https://machinefuture.github.io/fonts/FOT-RODINNTLG PRO DB.OTF') format('opentype');
+        }
+        body, textarea, select, button, footer {
+            font-family: 'Nintendo NTLGDB', sans-serif;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            display: flex;
+            width: 85%;
+            max-width: 1000px;
+            margin: 20px 0;
+        }
+        .left-column {
+            flex: 2.5;
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px;
+        }
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .textarea-container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            font-family: 'Nintendo NTLGDB', sans-serif;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #copied-message {
+            margin-top: 10px;
+            display: none;
+            font-style: italic;
+            color: green;
+        }
+        footer {
+            margin-top: 20px;
+            font-style: italic;
+        }
+        footer b {
+            font-weight: bold;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Text stylizer (BETA)</div>
+        <div class="left-column">
+            <div class="textarea-container">
+                <textarea id="input" placeholder="Enter text here..."></textarea>
+            </div>
+            <div class="textarea-container">
+                <textarea id="output" readonly placeholder="Styled text will appear here..."></textarea>
+            </div>
+        </div>
+        <div class="right-column">
+            <select id="style">
+                <option value="uppercase">UPPERCASE</option>
+                <option value="lowercase">lowercase</option>
+                <option value="titlecase">Title Case</option>
+                <option value="sentencecase">Sentence case</option>
+                <option value="alternatingcase">AlTeRnAtInG CaSe</option>
+                <option value="reversecase">rEVERSE CASE</option>
+                <option value="leetspeak">1337 5p34k</option>
+                <option value="specialcharacters">@ sp3ci@l ch@r@ct3rs</option>
+                <option value="superscript">sᵘᵖᵉʳˢᶜʳⁱᵖᵗ</option>
+                <option value="subscript">sₘₐₗₗ</option>
+                <option value="underline">u̲n̲d̲e̲r̲l̲i̲n̲e̲</option>
+                <option value="stars">*stars*</option>
+                <option value="slashes">/slashes/</option>
+                <option value="backwardtext">txet drawkcab</option>
+                <option value="piglatin">igpay atinlay</option>
+                <option value="morsecode">-- --- .-. ... . / -.-. --- -.. .</option>
+                <option value="binarycode">Binary 01100101</option>
+                <option value="braille">⠃⠗⠁⠊⠇⠇⠑</option>
+                <option value="rot13">ebg13</option>
+                <option value="zalgotext">z̴a̴l̴g̴o̴</option>
+                <option value="smallcaps">sᴍᴀʟʟ ᴄᴀᴘs</option>
+                <option value="blockletters">🅱🅻🅾🅲🅺🅻🅴🆃🆃🅴🆁🆂</option>
+                <option value="fullblockletters">🆃🅴🆇🆃 🅸🅽 🆂🆀🆄🅰🆁🅴 🅱🅻🅾🅲🅺🆂</option>
+                <option value="circledletters">ⓒⓘⓡⓒⓛⓔⓓ ⓛⓔⓣⓣⓔⓡⓢ</option>
+                <option value="upsidedown">ɐʇǝʇʇǝs nʍopǝpᴉsuʍo</option>
+                <option value="boldletters">𝐁𝐨𝐥𝐝 𝐋𝐞𝐭𝐭𝐞𝐫𝐬</option>
+                <option value="italicletters">𝘪𝘵𝘢𝘭𝘪𝘤 𝘭𝘦𝘵𝘵𝘦𝘳𝘴</option>
+                <option value="bolditalicletters">𝙗𝙤𝙡𝙙 𝙞𝙩𝙖𝙡𝙞𝙘 𝙡𝙚𝙩𝙩𝙚𝙧𝙨</option>
+                <option value="monospacedletters">𝚖𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎𝚍 𝚕𝚎𝚝𝚝𝚎𝚛𝚜</option>
+            </select>
+            <button id="copy-button">Copy</button>
+            <div id="copied-message">Copied!</div>
+        </div>
+    </div>
+    <footer>
+        Made by futuremachine on Discord. <b><i>Beta version.</i></b>
+        pretty unstable and not optimized right now. will fix in the future
+    </footer>
+    
+    <script>
+        const input = document.getElementById('input');
+        const output = document.getElementById('output');
+        const styleSelect = document.getElementById('style');
+        const copyButton = document.getElementById('copy-button');
+        const copiedMessage = document.getElementById('copied-message');
+
+        const applyStyle = (text, style) => {
+            switch (style) {
+                case 'uppercase': return text.toUpperCase();
+                case 'lowercase': return text.toLowerCase();
+                case 'titlecase': return text.replace(/\w\S*/g, w => w.replace(/^\w/, c => c.toUpperCase()));
+                case 'sentencecase': return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+                case 'alternatingcase': return text.split('').map((c, i) => i % 2 ? c.toLowerCase() : c.toUpperCase()).join('');
+                case 'reversecase': return text.split('').map(c => c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase()).join('');
+                case 'leetspeak': return text.replace(/a/gi, '4').replace(/e/gi, '3').replace(/i/gi, '1').replace(/o/gi, '0').replace(/s/gi, '5').replace(/t/gi, '7');
+                case 'specialcharacters': return text.replace(/a/gi, '@').replace(/e/gi, '3').replace(/i/gi, '!').replace(/o/gi, '0').replace(/s/gi, '$');
+                case 'superscript': return text.replace(/[a-zA-Z0-9]/g, c => {
+                    const superscriptLetters = {
+                        'a': 'ᵃ', 'b': 'ᵇ', 'c': 'ᶜ', 'd': 'ᵈ', 'e': 'ᵉ', 'f': 'ᶠ', 'g': 'ᵍ', 'h': 'ʰ',
+                        'i': 'ⁱ', 'j': 'ʲ', 'k': 'ᵏ', 'l': 'ˡ', 'm': 'ᵐ', 'n': 'ⁿ', 'o': 'ᵒ', 'p': 'ᵖ',
+                        'q': 'ᑫ', 'r': 'ʳ', 's': 'ˢ', 't': 'ᵗ', 'u': 'ᵘ', 'v': 'ᵛ', 'w': 'ʷ', 'x': 'ˣ',
+                        'y': 'ʸ', 'z': 'ᶻ', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵',
+                        '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
+                    };
+                    return superscriptLetters[c.toLowerCase()] || c;
+                });
+                case 'subscript': return text.replace(/[a-zA-Z0-9]/g, c => {
+                    const subscriptLetters = {
+                        'a': 'ₐ', 'b': 'ᵦ', 'c': '𝒸', 'd': '𝒹', 'e': 'ₑ', 'f': '𝒻', 'g': '𝓰', 'h': 'ₕ',
+                        'i': 'ᵢ', 'j': 'ⱼ', 'k': 'ₖ', 'l': 'ₗ', 'm': 'ₘ', 'n': 'ₙ', 'o': 'ₒ', 'p': 'ₚ',
+                        'q': 'q', 'r': 'ᵣ', 's': 'ₛ', 't': 'ₜ', 'u': 'ᵤ', 'v': 'ᵥ', 'w': 'w', 'x': 'ₓ',
+                        'y': 'y', 'z': 'z', '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅',
+                        '6': '₆', '7': '₇', '8': '₈', '9': '₉'
+                    };
+                    return subscriptLetters[c.toLowerCase()] || c;
+                });
+                case 'underline': return text.split('').join('\u0332');
+                case 'stars': return `*${text}*`;
+                case 'slashes': return `/${text}/`;
+                case 'backwardtext': return text.split('').reverse().join('');
+                case 'piglatin': return text.replace(/\b(\w)(\w+)\b/g, '$2$1ay');
+                case 'morsecode': return text.split('').map(c => {
+                    const morse = {
+                        'a': '.-', 'b': '-...', 'c': '-.-.', 'd': '-..', 'e': '.', 'f': '..-.', 'g': '--.', 'h': '....',
+                        'i': '..', 'j': '.---', 'k': '-.-', 'l': '.-..', 'm': '--', 'n': '-.', 'o': '---', 'p': '.--.',
+                        'q': '--.-', 'r': '.-.', 's': '...', 't': '-', 'u': '..-', 'v': '...-', 'w': '.--', 'x': '-..-',
+                        'y': '-.--', 'z': '--..', ' ': '/', '0': '-----', '1': '.----', '2': '..---', '3': '...--',
+                        '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.'
+                    };
+                    return morse[c.toLowerCase()] || c;
+                }).join(' ');
+                case 'binarycode': return text.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+                case 'braille': return text.replace(/./g, c => {
+                    const braille = {
+                        'a': '⠁', 'b': '⠃', 'c': '⠉', 'd': '⠙', 'e': '⠑', 'f': '⠋', 'g': '⠛', 'h': '⠓',
+                        'i': '⠊', 'j': '⠚', 'k': '⠅', 'l': '⠇', 'm': '⠍', 'n': '⠝', 'o': '⠕', 'p': '⠏',
+                        'q': '⠟', 'r': '⠗', 's': '⠎', 't': '⠞', 'u': '⠥', 'v': '⠧', 'w': '⠺', 'x': '⠭',
+                        'y': '⠽', 'z': '⠵', ' ': '⠶'
+                    };
+                    return braille[c.toLowerCase()] || c;
+                });
+                case 'rot13': return text.replace(/[a-zA-Z]/g, c =>
+                    String.fromCharCode(c.charCodeAt(0) + (c.toLowerCase() < 'n' ? 13 : -13))
+                );
+                case 'zalgotext': return text.split('').map(c => c + '\u0334').join('');
+                case 'smallcaps': return text.replace(/[a-z]/g, c => {
+                    const smallCaps = {
+                        'a': 'ᴀ', 'b': 'ʙ', 'c': 'ᴄ', 'd': 'ᴅ', 'e': 'ᴇ', 'f': 'ғ', 'g': 'ɢ', 'h': 'ʜ',
+                        'i': 'ɪ', 'j': 'ᴊ', 'k': 'ᴋ', 'l': 'ʟ', 'm': 'ᴍ', 'n': 'ɴ', 'o': 'ᴏ', 'p': 'ᴘ',
+                        'q': 'ǫ', 'r': 'ʀ', 's': 's', 't': 'ᴛ', 'u': 'ᴜ', 'v': 'ᴠ', 'w': 'ᴡ', 'x': 'x',
+                        'y': 'ʏ', 'z': 'ᴢ'
+                    };
+                    return smallCaps[c.toLowerCase()] || c;
+                });
+                case 'blockletters': return text.replace(/[a-zA-Z0-9]/g, c => {
+                    const blockLetters = {
+                        'A': '🅰', 'B': '🅱', 'C': '🅲', 'D': '🅳', 'E': '🅴', 'F': '🅵', 'G': '🅶', 'H': '🅷',
+                        'I': '🅸', 'J': '🅹', 'K': '🅺', 'L': '🅻', 'M': '🅼', 'N': '🅽', 'O': '🅾', 'P': '🅿',
+                        'Q': '🆀', 'R': '🆁', 'S': '🆂', 'T': '🆃', 'U': '🆄', 'V': '🆅', 'W': '🆆', 'X': '🆇',
+                        'Y': '🆈', 'Z': '🆉', 'a': '🅰', 'b': '🅱', 'c': '🅲', 'd': '🅳', 'e': '🅴', 'f': '🅵',
+                        'g': '🅶', 'h': '🅷', 'i': '🅸', 'j': '🅹', 'k': '🅺', 'l': '🅻', 'm': '🅼', 'n': '🅽',
+                        'o': '🅾', 'p': '🅿', 'q': '🆀', 'r': '🆁', 's': '🆂', 't': '🆃', 'u': '🆄', 'v': '🆅',
+                        'w': '🆆', 'x': '🆇', 'y': '🆈', 'z': '🆉', '0': '0', '1': '1', '2': '2', '3': '3',
+                        '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9'
+                    };
+                    return blockLetters[c] || c;
+                });
+                case 'fullblockletters': return text.replace(/[a-zA-Z0-9]/g, c => {
+                    const fullBlockLetters = {
+                        'A': '🅰', 'B': '🅱', 'C': '🅲', 'D': '🅳', 'E': '🅴', 'F': '🅵', 'G': '🅶', 'H': '🅷',
+                        'I': '🅸', 'J': '🅹', 'K': '🅺', 'L': '🅻', 'M': '🅼', 'N': '🅽', 'O': '🅾', 'P': '🅿',
+                        'Q': '🆀', 'R': '🆁', 'S': '🆂', 'T': '🆃', 'U': '🆄', 'V': '🆅', 'W': '🆆', 'X': '🆇',
+                        'Y': '🆈', 'Z': '🆉', 'a': '🅰', 'b': '🅱', 'c': '🅲', 'd': '🅳', 'e': '🅴', 'f': '🅵',
+                        'g': '🅶', 'h': '🅷', 'i': '🅸', 'j': '🅹', 'k': '🅺', 'l': '🅻', 'm': '🅼', 'n': '🅽',
+                        'o': '🅾', 'p': '🅿', 'q': '🆀', 'r': '🆁', 's': '🆂', 't': '🆃', 'u': '🆄', 'v': '🆅',
+                        'w': '🆆', 'x': '🆇', 'y': '🆈', 'z': '🆉', '0': '0', '1': '1', '2': '2', '3': '3',
+                        '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9'
+                    };
+                    return fullBlockLetters[c] || c;
+                });
+                case 'circledletters': return text.replace(/[a-zA-Z0-9]/g, c => {
+                    const circledLetters = {
+                        'A': 'Ⓐ', 'B': 'Ⓑ', 'C': 'Ⓒ', 'D': 'Ⓓ', 'E': 'Ⓔ', 'F': 'Ⓕ', 'G': 'Ⓖ', 'H': 'Ⓗ',
+                        'I': 'Ⓘ', 'J': 'Ⓙ', 'K': 'Ⓚ', 'L': 'Ⓛ', 'M': 'Ⓜ', 'N': 'Ⓝ', 'O': 'Ⓞ', 'P': 'Ⓟ',
+                        'Q': 'Ⓠ', 'R': 'Ⓡ', 'S': 'Ⓢ', 'T': 'Ⓣ', 'U': 'Ⓤ', 'V': 'Ⓥ', 'W': 'Ⓦ', 'X': 'Ⓧ',
+                        'Y': 'Ⓨ', 'Z': 'Ⓩ', 'a': 'ⓐ', 'b': 'ⓑ', 'c': 'ⓒ', 'd': 'ⓓ', 'e': 'ⓔ', 'f': 'ⓕ',
+                        'g': 'ⓖ', 'h': 'ⓗ', 'i': 'ⓘ', 'j': 'ⓙ', 'k': 'ⓚ', 'l': 'ⓛ', 'm': 'ⓜ', 'n': 'ⓝ',
+                        'o': 'ⓞ', 'p': 'ⓟ', 'q': 'ⓠ', 'r': 'ⓡ', 's': 'ⓢ', 't': 'ⓣ', 'u': 'ⓤ', 'v': 'ⓥ',
+                        'w': 'ⓦ', 'x': 'ⓧ', 'y': 'ⓨ', 'z': 'ⓩ', '0': '⓪', '1': '①', '2': '②', '3': '③',
+                        '4': '④', '5': '⑤', '6': '⑥', '7': '⑦', '8': '⑧', '9': '⑨'
+                    };
+                    return circledLetters[c] || c;
+                });
+                case 'upsidedown': return text.replace(/[a-zA-Z0-9]/g, c => {
+                    const upsideDownLetters = {
+                        'A': '∀', 'B': '𐐒', 'C': 'Ↄ', 'D': '◖', 'E': 'Ǝ', 'F': 'Ⅎ', 'G': '⅁', 'H': 'H',
+                        'I': 'I', 'J': 'ſ', 'K': '⋊', 'L': '˥', 'M': 'W', 'N': 'ᴎ', 'O': 'O', 'P': 'Ԁ',
+                        'Q': 'Ό', 'R': 'ᴚ', 'S': 'S', 'T': '⊥', 'U': '∩', 'V': 'ᴧ', 'W': 'M', 'X': 'X',
+                        'Y': '⅄', 'Z': 'Z', 'a': 'ɐ', 'b': 'q', 'c': 'ɔ', 'd': 'p', 'e': 'ǝ', 'f': 'ɟ',
+                        'g': 'ƃ', 'h': 'ɥ', 'i': 'ᴉ', 'j': 'ɾ', 'k': 'ʞ', 'l': 'ʃ', 'm': 'ɯ', 'n': 'u',
+                        'o': 'o', 'p': 'd', 'q': 'b', 'r': 'ɹ', 's': 's', 't': 'ʇ', 'u': 'n', 'v': 'ʌ',
+                        'w': 'ʍ', 'x': 'x', 'y': 'ʎ', 'z': 'z', '0': '0', '1': 'Ɩ', '2': 'ᄅ', '3': 'Ɛ',
+                        '4': 'ㄣ', '5': 'ϛ', '6': '9', '7': 'ㄥ', '8': '8', '9': '6'
+                    };
+                    return upsideDownLetters[c] || c;
+                });
+                case 'boldletters': return text.replace(/[a-zA-Z0-9]/g, c => {
+                    const boldLetters = {
+                        'A': '𝐀', 'B': '𝐁', 'C': '𝐂', 'D': '𝐃', 'E': '𝐄', 'F': '𝐅', 'G': '𝐆', 'H': '𝐇',
+                        'I': '𝐈', 'J': '𝐉', 'K': '𝐊', 'L': '𝐋', 'M': '𝐌', 'N': '𝐍', 'O': '𝐎', 'P': '𝐏',
+                        'Q': '𝐐', 'R': '𝐑', 'S': '𝐒', 'T': '𝐓', 'U': '𝐔', 'V': '𝐕', 'W': '𝐖', 'X': '𝐗',
+                        'Y': '𝐘', 'Z': '𝐙', 'a': '𝐚', 'b': '𝐛', 'c': '𝐜', 'd': '𝐝', 'e': '𝐞', 'f': '𝐟',
+                        'g': '𝐠', 'h': '𝐡', 'i': '𝐢', 'j': '𝐣', 'k': '𝐤', 'l': '𝐥', 'm': '𝐦', 'n': '𝐧',
+                        'o': '𝐨', 'p': '𝐩', 'q': '𝐪', 'r': '𝐫', 's': '𝐬', 't': '𝐭', 'u': '𝐮', 'v': '𝐯',
+                        'w': '𝐰', 'x': '𝐱', 'y': '𝐲', 'z': '𝐳', '0': '𝟎', '1': '𝟏', '2': '𝟐', '3': '𝟑',
+                        '4': '𝟒', '5': '𝟓', '6': '𝟔', '7': '𝟕', '8': '𝟖', '9': '𝟗'
+                    };
+                    return boldLetters[c] || c;
+                });
+                case 'italicletters': return text.replace(/[a-zA-Z0-9]/g, c => {
+                    const italicLetters = {
+                        'A': '𝘈', 'B': '𝘉', 'C': '𝘊', 'D': '𝘋', 'E': '𝘌', 'F': '𝘍', 'G': '𝘎', 'H': '𝘏',
+                        'I': '𝘐', 'J': '𝘑', 'K': '𝘒', 'L': '𝘓', 'M': '𝘔', 'N': '𝘕', 'O': '𝘖', 'P': '𝘗',
+                        'Q': '𝘘', 'R': '𝘙', 'S': '𝘚', 'T': '𝘛', 'U': '𝘜', 'V': '𝘝', 'W': '𝘞', 'X': '𝘟',
+                        'Y': '𝘠', 'Z': '𝘡', 'a': '𝘢', 'b': '𝘣', 'c': '𝘤', 'd': '𝘥', 'e': '𝘦', 'f': '𝘧',
+                        'g': '𝘨', 'h': '𝘩', 'i': '𝘪', 'j': '𝘫', 'k': '𝘬', 'l': '𝘭', 'm': '𝘮', 'n': '𝘯',
+                        'o': '𝘰', 'p': '𝘱', 'q': '𝘲', 'r': '𝘳', 's': '𝘴', 't': '𝘵', 'u': '𝘶', 'v': '𝘷',
+                        'w': '𝘸', 'x': '𝘹', 'y': '𝘺', 'z': '𝘻', '0': '0', '1': '1', '2': '2', '3': '3',
+                        '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9'
+                    };
+                    return italicLetters[c] || c;
+                });
+                case 'bolditalicletters': return text.replace(/[a-zA-Z0-9]/g, c => {
+                    const boldItalicLetters = {
+                        'A': '𝘼', 'B': '𝘽', 'C': '𝘾', 'D': '𝘿', 'E': '𝙀', 'F': '𝙁', 'G': '𝙂', 'H': '𝙃',
+                        'I': '𝙄', 'J': '𝙅', 'K': '𝙆', 'L': '𝙇', 'M': '𝙈', 'N': '𝙉', 'O': '𝙊', 'P': '𝙋',
+                        'Q': '𝙌', 'R': '𝙍', 'S': '𝙎', 'T': '𝙏', 'U': '𝙐', 'V': '𝙑', 'W': '𝙒', 'X': '𝙓',
+                        'Y': '𝙔', 'Z': '𝙕', 'a': '𝙖', 'b': '𝙗', 'c': '𝙘', 'd': '𝙙', 'e': '𝙚', 'f': '𝙛',
+                        'g': '𝙜', 'h': '𝙝', 'i': '𝙞', 'j': '𝙟', 'k': '𝙠', 'l': '𝙡', 'm': '𝙢', 'n': '𝙣',
+                        'o': '𝙤', 'p': '𝙥', 'q': '𝙦', 'r': '𝙧', 's': '𝙨', 't': '𝙩', 'u': '𝙪', 'v': '𝙫',
+                        'w': '𝙬', 'x': '𝙭', 'y': '𝙮', 'z': '𝙯', '0': '0', '1': '1', '2': '2', '3': '3',
+                        '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9'
+                    };
+                    return boldItalicLetters[c] || c;
+                });
+                case 'monospacedletters': return text.replace(/[a-zA-Z0-9]/g, c => {
+                    const monospacedLetters = {
+                        'A': '𝙰', 'B': '𝙱', 'C': '𝙲', 'D': '𝙳', 'E': '𝙴', 'F': '𝙵', 'G': '𝙶', 'H': '𝙷',
+                        'I': '𝙸', 'J': '𝙹', 'K': '𝙺', 'L': '𝙻', 'M': '𝙼', 'N': '𝙽', 'O': '𝙾', 'P': '𝙿',
+                        'Q': '𝚀', 'R': '𝚁', 'S': '𝚂', 'T': '𝚃', 'U': '𝚄', 'V': '𝚅', 'W': '𝚆', 'X': '𝚇',
+                        'Y': '𝚈', 'Z': '𝚉', 'a': '𝚊', 'b': '𝚋', 'c': '𝚌', 'd': '𝚍', 'e': '𝚎', 'f': '𝚏',
+                        'g': '𝚐', 'h': '𝚑', 'i': '𝚒', 'j': '𝚓', 'k': '𝚔', 'l': '𝚕', 'm': '𝚖', 'n': '𝚗',
+                        'o': '𝚘', 'p': '𝚙', 'q': '𝚚', 'r': '𝚛', 's': '𝚜', 't': '𝚝', 'u': '𝚞', 'v': '𝚟',
+                        'w': '𝚠', 'x': '𝚡', 'y': '𝚢', 'z': '𝚣', '0': '𝟶', '1': '𝟷', '2': '𝟸', '3': '𝟹',
+                        '4': '𝟺', '5': '𝟻', '6': '𝟼', '7': '𝟽', '8': '𝟾', '9': '𝟿'
+                    };
+                    return monospacedLetters[c] || c;
+                });
+                default: return text;
+            }
+        };
+
+        const updateOutput = () => {
+            const inputText = input.value;
+            const selectedStyle = styleSelect.value;
+            const styledText = applyStyle(inputText, selectedStyle);
+            output.value = styledText;
+            if (copiedMessage.style.display === 'block') {
+                copiedMessage.style.display = 'none';
+            }
+        };
+
+        const copyToClipboard = () => {
+            output.select();
+            document.execCommand('copy');
+            copiedMessage.style.display = 'block';
+        };
+
+        input.addEventListener('input', updateOutput);
+        styleSelect.addEventListener('change', updateOutput);
+        copyButton.addEventListener('click', copyToClipboard);
+    </script>
+    <meta property="og:title" content="Text stylizer (BETA)">
+    <meta property="og:description" content="Stylize your texts in over 20+ formats! Beta version. Made by futuremachine on Discord.">
+</body>
+</html>
