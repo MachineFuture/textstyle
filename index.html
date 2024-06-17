@@ -19,11 +19,22 @@
             padding: 20px;
             background-color: #f4f4f9;
         }
+        .header {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
         .container {
             display: flex;
+            flex-direction: column;
             width: 85%;
             max-width: 1000px;
             margin: 20px 0;
+        }
+        .row {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            margin-bottom: 10px;
         }
         .left-column {
             flex: 2.5;
@@ -46,19 +57,18 @@
             width: 100%;
             height: 150px;
             padding: 10px;
-            font-size: 1rem;
+            font-size: 1.05rem;
             margin-bottom: 10px;
-            font-family: 'Nintendo NTLGDB', sans-serif;
         }
         select {
             width: 100%;
             padding: 10px;
-            font-size: 1rem;
+            font-size: 1.05rem;
             margin-bottom: 10px;
         }
         button {
             padding: 10px 20px;
-            font-size: 1rem;
+            font-size: 1.05rem;
             cursor: pointer;
             margin-top: 10px;
         }
@@ -73,61 +83,63 @@
             font-style: italic;
         }
         footer b {
-            font-weight: bold;
             font-style: italic;
         }
     </style>
 </head>
 <body>
+    <div class="header">Text stylizer (BETA)</div>
     <div class="container">
-        <div class="header">Text stylizer (BETA)</div>
-        <div class="left-column">
-            <div class="textarea-container">
-                <textarea id="input" placeholder="Enter text here..."></textarea>
+        <div class="row">
+            <div class="left-column">
+                <div class="textarea-container">
+                    <textarea id="input" placeholder="Enter text here..."></textarea>
+                </div>
+                <div class="textarea-container">
+                    <textarea id="output" readonly placeholder="Styled text will appear here..."></textarea>
+                </div>
             </div>
-            <div class="textarea-container">
-                <textarea id="output" readonly placeholder="Styled text will appear here..."></textarea>
+            <div class="right-column">
+                <select id="style">
+                    <option value="uppercase">UPPERCASE</option>
+                    <option value="lowercase">lowercase</option>
+                    <option value="titlecase">Title Case</option>
+                    <option value="sentencecase">Sentence case</option>
+                    <option value="alternatingcase">AlTeRnAtInG CaSe</option>
+                    <option value="alternatingcase2">aLtErNaTiNg cAsE 2</option>
+                    <option value="reversecase">rEVERSE CASE</option>
+                    <option value="leetspeak">1337 Speak</option>
+                    <option value="specialcharacters">sp3ci@l ch@r@ct3rs</option>
+                    <option value="superscript">sᵘᵖᵉʳˢᶜʳⁱᵖᵗ</option>
+                    <option value="subscript">sₘₐₗₗ</option>
+                    <option value="underline">u̲n̲d̲e̲r̲l̲i̲n̲e̲</option>
+                    <option value="stars">*stars*</option>
+                    <option value="slashes">/slashes/</option>
+                    <option value="backwardtext">Backward Text</option>
+                    <option value="piglatin">Pig Latin</option>
+                    <option value="morsecode">Morse Code</option>
+                    <option value="binarycode">Binary 01100101</option>
+                    <option value="braille">⠃⠗⠁⠊⠇⠇⠑</option>
+                    <option value="rot13">ROT13</option>
+                    <option value="zalgotext">z̴a̴l̴g̴o̴</option>
+                    <option value="smallcaps">sᴍᴀʟʟ ᴄᴀᴘs</option>
+                    <option value="blockletters">🅱🅻🅾🅲🅺🅻🅴🆃🆃🅴🆁🆂</option>
+                    <option value="fullblockletters">Text with Square Edges</option>
+                    <option value="circledletters">ⓒⓘⓡⓒⓛⓔⓓ ⓛⓔⓣⓣⓔⓡⓢ</option>
+                    <option value="upsidedown">Upside Down Text</option>
+                    <option value="boldletters">𝐁𝐨𝐥𝐝 𝐋𝐞𝐭𝐭𝐞𝐫𝐬</option>
+                    <option value="italicletters">𝘪𝘵𝘢𝘭𝘪𝘤 𝘭𝘦𝘵𝘵𝘦𝘳𝘴</option>
+                    <option value="bolditalicletters">𝙗𝙤𝙡𝙙 𝙞𝙩𝙖𝙡𝙞𝙘 𝙡𝙚𝙩𝙩𝙚𝙧𝙨</option>
+                    <option value="monospacedletters">𝚖𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎𝚍 𝚕𝚎𝚝𝚝𝚎𝚛𝚜</option>
+                </select>
+                <button id="copy-button">Copy</button>
+                <div id="copied-message">Copied!</div>
             </div>
-        </div>
-        <div class="right-column">
-            <select id="style">
-                <option value="uppercase">UPPERCASE</option>
-                <option value="lowercase">lowercase</option>
-                <option value="titlecase">Title Case</option>
-                <option value="sentencecase">Sentence case</option>
-                <option value="alternatingcase">AlTeRnAtInG CaSe</option>
-                <option value="reversecase">rEVERSE CASE</option>
-                <option value="leetspeak">1337 5p34k</option>
-                <option value="specialcharacters">@ sp3ci@l ch@r@ct3rs</option>
-                <option value="superscript">sᵘᵖᵉʳˢᶜʳⁱᵖᵗ</option>
-                <option value="subscript">sₘₐₗₗ</option>
-                <option value="underline">u̲n̲d̲e̲r̲l̲i̲n̲e̲</option>
-                <option value="stars">*stars*</option>
-                <option value="slashes">/slashes/</option>
-                <option value="backwardtext">txet drawkcab</option>
-                <option value="piglatin">igpay atinlay</option>
-                <option value="morsecode">-- --- .-. ... . / -.-. --- -.. .</option>
-                <option value="binarycode">Binary 01100101</option>
-                <option value="braille">⠃⠗⠁⠊⠇⠇⠑</option>
-                <option value="rot13">ebg13</option>
-                <option value="zalgotext">z̴a̴l̴g̴o̴</option>
-                <option value="smallcaps">sᴍᴀʟʟ ᴄᴀᴘs</option>
-                <option value="blockletters">🅱🅻🅾🅲🅺🅻🅴🆃🆃🅴🆁🆂</option>
-                <option value="fullblockletters">🆃🅴🆇🆃 🅸🅽 🆂🆀🆄🅰🆁🅴 🅱🅻🅾🅲🅺🆂</option>
-                <option value="circledletters">ⓒⓘⓡⓒⓛⓔⓓ ⓛⓔⓣⓣⓔⓡⓢ</option>
-                <option value="upsidedown">ɐʇǝʇʇǝs nʍopǝpᴉsuʍo</option>
-                <option value="boldletters">𝐁𝐨𝐥𝐝 𝐋𝐞𝐭𝐭𝐞𝐫𝐬</option>
-                <option value="italicletters">𝘪𝘵𝘢𝘭𝘪𝘤 𝘭𝘦𝘵𝘵𝘦𝘳𝘴</option>
-                <option value="bolditalicletters">𝙗𝙤𝙡𝙙 𝙞𝙩𝙖𝙡𝙞𝙘 𝙡𝙚𝙩𝙩𝙚𝙧𝙨</option>
-                <option value="monospacedletters">𝚖𝚘𝚗𝚘𝚜𝚙𝚊𝚌𝚎𝚍 𝚕𝚎𝚝𝚝𝚎𝚛𝚜</option>
-            </select>
-            <button id="copy-button">Copy</button>
-            <div id="copied-message">Copied!</div>
         </div>
     </div>
     <footer>
         Made by futuremachine on Discord. <b><i>Beta version.</i></b>
-        pretty unstable and not optimized right now. will fix in the future
+        Pretty unstable and not optimized right now. Will fix in the future.
     </footer>
     
     <script>
@@ -144,6 +156,8 @@
                 case 'titlecase': return text.replace(/\w\S*/g, w => w.replace(/^\w/, c => c.toUpperCase()));
                 case 'sentencecase': return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
                 case 'alternatingcase': return text.split('').map((c, i) => i % 2 ? c.toLowerCase() : c.toUpperCase()).join('');
+                case 'alternatingcase2': return text.split('').map((c, i) => i % 2 ? c.toUpperCase() : c.toLowerCase()).join('');
+
                 case 'reversecase': return text.split('').map(c => c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase()).join('');
                 case 'leetspeak': return text.replace(/a/gi, '4').replace(/e/gi, '3').replace(/i/gi, '1').replace(/o/gi, '0').replace(/s/gi, '5').replace(/t/gi, '7');
                 case 'specialcharacters': return text.replace(/a/gi, '@').replace(/e/gi, '3').replace(/i/gi, '!').replace(/o/gi, '0').replace(/s/gi, '$');
@@ -220,13 +234,13 @@
                 });
                 case 'fullblockletters': return text.replace(/[a-zA-Z0-9]/g, c => {
                     const fullBlockLetters = {
-                        'A': '🅰', 'B': '🅱', 'C': '🅲', 'D': '🅳', 'E': '🅴', 'F': '🅵', 'G': '🅶', 'H': '🅷',
-                        'I': '🅸', 'J': '🅹', 'K': '🅺', 'L': '🅻', 'M': '🅼', 'N': '🅽', 'O': '🅾', 'P': '🅿',
-                        'Q': '🆀', 'R': '🆁', 'S': '🆂', 'T': '🆃', 'U': '🆄', 'V': '🆅', 'W': '🆆', 'X': '🆇',
-                        'Y': '🆈', 'Z': '🆉', 'a': '🅰', 'b': '🅱', 'c': '🅲', 'd': '🅳', 'e': '🅴', 'f': '🅵',
-                        'g': '🅶', 'h': '🅷', 'i': '🅸', 'j': '🅹', 'k': '🅺', 'l': '🅻', 'm': '🅼', 'n': '🅽',
-                        'o': '🅾', 'p': '🅿', 'q': '🆀', 'r': '🆁', 's': '🆂', 't': '🆃', 'u': '🆄', 'v': '🆅',
-                        'w': '🆆', 'x': '🆇', 'y': '🆈', 'z': '🆉', '0': '0', '1': '1', '2': '2', '3': '3',
+                        'A': '🄰', 'B': '🄱', 'C': '🄲', 'D': '🄳', 'E': '🄴', 'F': '🄵', 'G': '🄶', 'H': '🄷',
+                        'I': '🄸', 'J': '🄹', 'K': '🄺', 'L': '🄻', 'M': '🄼', 'N': '🄽', 'O': '🄾', 'P': '🄿',
+                        'Q': '🅀', 'R': '🅁', 'S': '🅂', 'T': '🅃', 'U': '🅄', 'V': '🅅', 'W': '🅆', 'X': '🅇',
+                        'Y': '🅈', 'Z': '🅉', 'a': '🄰', 'b': '🄱', 'c': '🄲', 'd': '🄳', 'e': '🄴', 'f': '🄵',
+                        'g': '🄶', 'h': '🄷', 'i': '🄸', 'j': '🄹', 'k': '🄺', 'l': '🄻', 'm': '🄼', 'n': '🄽',
+                        'o': '🄾', 'p': '🄿', 'q': '🅀', 'r': '🅁', 's': '🅂', 't': '🅃', 'u': '🅄', 'v': '🅅',
+                        'w': '🅆', 'x': '🅇', 'y': '🅈', 'z': '🅉', '0': '0', '1': '1', '2': '2', '3': '3',
                         '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9'
                     };
                     return fullBlockLetters[c] || c;
